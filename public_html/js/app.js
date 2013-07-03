@@ -144,7 +144,7 @@ requirejs(['my/spritesLoader', 'easeljs'],
                     // We've reached the right side of our screen
                     // We need to walk left now to go back to our initial position
                     bmpAnimation.direction = -90;
-                    bmpAnimation.gotoAndPlay("walk")
+                    bmpAnimation.gotoAndPlay("walk");
                 }
 
                 if (bmpAnimation.x < 16) {
