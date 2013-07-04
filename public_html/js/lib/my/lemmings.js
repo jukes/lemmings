@@ -147,7 +147,8 @@ define(['my/assetsHolder', 'easeljs', 'ndgmr'],
                             case this.WALKING:
                                 //console.log('Walking');
                                 this.walkAnimation.x += this.walkAnimation.vX;
-                                var collision = ndgmr.checkPixelCollision(this.walkAnimation, this.level, 0);
+                                //Avoid "Walking in the Air" mode
+                                var collision = ndgmr.checkPixelCollision(this.walkAnimation, this.level, 0);                                
                                 if (!collision) {
                                     this.walkAnimation.y += this.walkAnimation.vY;
                                 }
