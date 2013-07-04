@@ -4,6 +4,9 @@ requirejs.config({
     shim: {
         easeljs: {
             exports: 'createjs'
+        },
+        ndgmr:{
+            exports: 'ndgmr'
         }
     },
     //except, if the module ID starts with "app",
@@ -16,14 +19,15 @@ requirejs.config({
     }
 });
 
-requirejs(['my/assetsHolder', 'easeljs', 'my/lemmings'],
-        function(assetsHolder, createjs, lemmings) {
+requirejs(['my/assetsHolder', 'easeljs', 'my/lemmings', 'ndgmr'],
+        function(assetsHolder, createjs, lemmings, ndgmr) {
 
             var canvas;
             var stage;
             var screen_width;
             var screen_height;
             var lemming_list = [];
+            var levelBitmap;
 
             canvas = document.getElementById('gameCanvas');
 
@@ -58,12 +62,19 @@ requirejs(['my/assetsHolder', 'easeljs', 'my/lemmings'],
                 //Save canvas dimensions for later calcs
                 screen_width = canvas.width;
                 screen_height = canvas.height;
+                
+                //Load level 
+                levelBitmap = new createjs.Bitmap(assetsHolder.sheet('level'));
+                levelBitmap.x=0;
+                levelBitmap.y=230;
+                stage.addChild(levelBitmap);
+                //stage.prototype.level = levelBitmap;
 
                 //Initialize lemming sprites
                 lemmings.init();
 
                 var lemming = createLemming();
-                stage.addChild(lemming.walkAnimation);
+                stage.addChild(lemming.fallAnimation);
 
                 createjs.Ticker.addListener(window);
                 createjs.Ticker.useRAF = true;
@@ -78,7 +89,7 @@ requirejs(['my/assetsHolder', 'easeljs', 'my/lemmings'],
              * @returns {Object}
              */
             function createLemming() {
-                var lemming = lemmings.create(stage, screen_width, screen_height);
+                var lemming = lemmings.create(stage, levelBitmap, screen_width, screen_height);
                 lemming_list.push(lemming);
                 return lemming;
             }
@@ -101,10 +112,10 @@ requirejs(['my/assetsHolder', 'easeljs', 'my/lemmings'],
                 var ticks = createjs.Ticker.getTicks();
                 if (ticks % 300 === 0) {
 
-                    if (lemming_list.length < 10) {
+                    if (lemming_list.length < 3) {
                         var lemming = createLemming();
 
-                        stage.addChild(lemming.walkAnimation);
+                        stage.addChild(lemming.fallAnimation);
                     }
                 }
                 

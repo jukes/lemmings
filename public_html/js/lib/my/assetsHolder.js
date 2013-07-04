@@ -1,6 +1,6 @@
 define([],function() {
     
-    var _MAX_IMAGES = 2;
+    var _MAX_IMAGES = 3;
     var _loadedImgs = 0;
     var _imgPath= './img/assets';
     var _sheets = {}; //Assoc array
@@ -36,8 +36,9 @@ define([],function() {
      * @returns {undefined}
      */
     function _loadAll(){
-        _loadImg('monsterARun', _imgPath+'/MonsterARun.png');        
-        _loadImg('monsterAIdle', _imgPath+'/MonsterAIdle.png');                
+        _loadImg('lemmingWalk', _imgPath+'/MonsterARun.png');        
+        _loadImg('lemmingFall', _imgPath+'/MonsterAIdle.png');
+        _loadImg('level', _imgPath+'/alevel.png');
     }
     
     //Exposed methos and properties  
