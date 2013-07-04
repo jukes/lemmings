@@ -1,8 +1,8 @@
-define(function() {
+define([],function() {
     
     var _MAX_IMAGES = 2;
     var _loadedImgs = 0;
-    var _imgPath= './img';
+    var _imgPath= './img/assets';
     var _sheets = {}; //Assoc array
     
     var _module = {};
