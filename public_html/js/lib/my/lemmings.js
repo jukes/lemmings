@@ -18,9 +18,12 @@ define(['my/assetsHolder', 'easeljs', 'ndgmr'],
                     images: [assetsHolder.sheet('lemmingWalk')],
                     //Width, height and registration point of each sprite
                     frames: {width: 64, height: 64, regX: 32, regY: 32},
+                    //frames: {width: 85, height: 83, regX: 32, regY: 32},
+                    
                     // To slow down the animation loop of the sprite, we set the frequency to 4 to slow down by a 4x factor
                     animations: {
                         walk: [0, 9, 'walk', 6]
+                        //walk: [0, 4, 'walk', 6]
                     }
                 });
 
@@ -56,6 +59,7 @@ define(['my/assetsHolder', 'easeljs', 'ndgmr'],
                 /**
                  * 
                  * @param {createjs.Stage} aStage
+                 * @param {createjs.Bitmap} aLevel 
                  * @param {Number} scr_width
                  * @param {Number} scr_height
                  * @returns {status: Number, screen_width: Number, screen_height: Number, walkAnimation: createjs.BitmapAnimation, fallAnimation: createjs.BitmapAnimation}
@@ -74,7 +78,7 @@ define(['my/assetsHolder', 'easeljs', 'ndgmr'],
                         screen_width: scr_width,
                         screen_height: scr_height,
                         stage: aStage,
-                        level: aLevel,
+                        level: aLevel
                     };
 
                     //Create a BitmapAnimation instance to display and play back the sprite sheet:
@@ -91,7 +95,7 @@ define(['my/assetsHolder', 'easeljs', 'ndgmr'],
 
                     // set up a shadow. Note that shadows are ridiculously expensive. You could display hundreds
                     // of animated rats if you disabled the shadow.
-                    lemming.walkAnimation.shadow = new createjs.Shadow("#454", 0, 5, 4);
+                    //lemming.walkAnimation.shadow = new createjs.Shadow("#454", 0, 5, 4);
 
                     lemming.walkAnimation.name = 'lemmingWalk';
                     lemming.walkAnimation.direction = 90;
@@ -110,7 +114,7 @@ define(['my/assetsHolder', 'easeljs', 'ndgmr'],
                     lemming.fallAnimation.y = 32;
                     lemming.fallAnimation.regX = lemming.fallAnimation.spriteSheet.frameWidth / 2 | 0;
                     lemming.fallAnimation.regY = lemming.fallAnimation.spriteSheet.frameHeight / 2 | 0;
-                    lemming.fallAnimation.gotoAndPlay("fall"); 	//walking from left to right
+                    lemming.fallAnimation.gotoAndPlay("fall");
 
 
                     lemming.getStatus = function() {
@@ -131,7 +135,12 @@ define(['my/assetsHolder', 'easeljs', 'ndgmr'],
                         switch (this.status) {
                             case this.SPAWN:
                                 var collision = ndgmr.checkPixelCollision(this.fallAnimation, this.level, 0);
+                                //var collision = ndgmr.checkRectCollision(this.fallAnimation, this.level);
                                 if (collision) {
+                                    
+                                    //Check for non transparent pixel in level
+                                    
+                                    
                                     this.status = this.WALKING;
                                     this.walkAnimation.direction = 90;
                                     this.walkAnimation.x = this.fallAnimation.x;
@@ -154,7 +163,6 @@ define(['my/assetsHolder', 'easeljs', 'ndgmr'],
                                 }
                                 break;
                         }
-
 
                         // Hit testing the screen width, otherwise our sprite would disappear
 //                        if (this.walkAnimation.x >= this.screen_width - 16) {

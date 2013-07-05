@@ -66,7 +66,7 @@ requirejs(['my/assetsHolder', 'easeljs', 'my/lemmings', 'ndgmr'],
                 //Load level 
                 levelBitmap = new createjs.Bitmap(assetsHolder.sheet('level'));
                 levelBitmap.x=0;
-                levelBitmap.y=230;
+                levelBitmap.y=190;
                 stage.addChild(levelBitmap);
                 //stage.prototype.level = levelBitmap;
 
@@ -112,7 +112,7 @@ requirejs(['my/assetsHolder', 'easeljs', 'my/lemmings', 'ndgmr'],
                 var ticks = createjs.Ticker.getTicks();
                 if (ticks % 300 === 0) {
 
-                    if (lemming_list.length < 3) {
+                    if (lemming_list.length < 5) {
                         var lemming = createLemming();
 
                         stage.addChild(lemming.fallAnimation);

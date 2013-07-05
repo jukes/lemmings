@@ -37,6 +37,7 @@ define([],function() {
      */
     function _loadAll(){
         _loadImg('lemmingWalk', _imgPath+'/MonsterARun.png');        
+        //_loadImg('lemmingWalk', _imgPath+'/oorjG.png');        
         _loadImg('lemmingFall', _imgPath+'/MonsterAIdle.png');
         _loadImg('level', _imgPath+'/alevel.png');
     }
