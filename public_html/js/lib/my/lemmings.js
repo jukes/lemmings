@@ -80,6 +80,7 @@ define(['my/assetsHolder', 'easeljs', 'ndgmr'],
                         stage: aStage,
                         level: aLevel,
                         levelObj: aLevelObj,
+                        width: 64,
                         height: 64
                     };
 
@@ -129,6 +130,66 @@ define(['my/assetsHolder', 'easeljs', 'ndgmr'],
 
                     /**
                      * 
+                     * @param {type} currentSprite
+                     * @returns {Boolean}
+                     */
+                    lemming.collisionY = function(currentSprite) {
+
+                        //console.log(currentSprite);
+
+                        var collision = false;
+
+                        if (currentSprite.y + this.height - 32 >= this.level.y) {
+
+                            var j = currentSprite.x;
+                            var i = currentSprite.y + this.height - 32 - 190;
+                            if (i < this.levelObj.length && j < this.levelObj[0].length) {
+                                //alert('ii='+i+', j='+j);
+
+                                //console.log('i=' + i + ', j=' + j + ' Val: ' + this.levelObj[i][j]);
+                                collision = this.levelObj[i][j] !== 0;
+                            }
+                        }
+
+                        return collision;
+                    };
+
+                    lemming.collisionX = function(currentSprite, maxHop, directionAngle) {
+
+                        var collision = {collision: false, yOffset: 0};
+
+                        if (currentSprite.y + this.height - 32 >= this.level.y) {
+
+                            var j = directionAngle === 90 ? currentSprite.x + 12  : currentSprite.x-16;
+                            var i = currentSprite.y + this.height - 32 - 190;
+                            if (i < this.levelObj.length && j < this.levelObj[0].length) {
+                                //alert('ii='+i+', j='+j);
+
+                                //console.log('i=' + i + ', j=' + j + ' Val: ' + this.levelObj[i][j]);
+                                var wallAhead = this.levelObj[i-5][j] !== 0;
+                                var climbable = false;
+                                if (wallAhead) {
+                                    //alert('wallAhead!: i='+i+', j='+j+' val='+this.levelObj[i][j]);
+                                    for (var k = 1; k <= maxHop; k++) {
+                                        console.log(this.levelObj[i - k][j]);
+                                        if (this.levelObj[i - k][j] === 0) {
+                                            climbable = true;
+                                            collision.yOffset = k+1;
+                                            break;
+                                        }
+                                    }
+                                    //if(!climbable)
+                                       //alert('Not climbable! yOff: '+collision.yOffset);
+                                }
+                                //console.log('Climb it? '+climbable);
+                                collision.collision = wallAhead && !climbable;
+                            }
+                        }
+                        return collision;
+                    };
+
+                    /**
+                     * 
                      * @returns {undefined}
                      */
                     lemming.tick = function() {
@@ -139,21 +200,9 @@ define(['my/assetsHolder', 'easeljs', 'ndgmr'],
                                 //var collision = ndgmr.checkPixelCollision(this.fallAnimation, this.level, 0);
                                 //var collision = ndgmr.checkRectCollision(this.fallAnimation, this.level);
 
-                                var collision = false;
-                                if (this.fallAnimation.y + this.height-32 >= this.level.y) {
-                                    
-                                    var j = this.fallAnimation.x;
-                                    var i = this.fallAnimation.y + this.height-32-190;
-                                    //alert('ii='+i+', j='+j);
-
-                                    console.log('i=' + i + ', j=' + j + ' Val: ' + this.levelObj[i][j]);
-                                    collision = this.levelObj[i][j] !== 0;
-                                    
-                                }
-                                //var collision = this.fallAnimation.y + this.height >= this.level.y && this.levelObj[this.fallAnimation.x][190+this.fallAnimation.y + this.height] !== 0;
+                                var collision = this.collisionY(this.fallAnimation);  //this.fallAnimation.y + this.height >= this.level.y && this.levelObj[this.fallAnimation.x][190+this.fallAnimation.y + this.height] !== 0;
 
                                 if (collision) {
-                                    //Check for non transparent pixel in level
                                     this.status = this.WALKING;
                                     this.walkAnimation.direction = 90;
                                     this.walkAnimation.x = this.fallAnimation.x;
@@ -167,13 +216,30 @@ define(['my/assetsHolder', 'easeljs', 'ndgmr'],
                                 }
                                 break;
                             case this.WALKING:
-                                //console.log('Walking');
+                                //alert('Walking');
                                 this.walkAnimation.x += this.walkAnimation.vX;
+
+                                var collidedX = this.collisionX(this.walkAnimation, 15, this.walkAnimation.direction);
+                                if (collidedX.collition) {
+                                    if (this.walkAnimation.direction === 90) {
+                                        this.walkAnimation.direction = -90;
+                                        this.walkAnimation.gotoAndPlay("walk");
+                                    }
+                                    else {
+                                        this.walkAnimation.direction = 90;
+                                        this.walkAnimation.gotoAndPlay("walk");
+                                    }
+                                }
+                                else /*if (collidedX.yOffset>2)*/ {
+                                    this.walkAnimation.y -= collidedX.yOffset;
+                                }
+
                                 //Avoid "Walking in the Air" mode
-                                //var collision = ndgmr.checkPixelCollision(this.walkAnimation, this.level, 0);                                
-                                //if (!collision) {
-                                //    this.walkAnimation.y += this.walkAnimation.vY;
-                                //}
+                                var collidedY = this.collisionY(this.walkAnimation);
+                                if (!collidedY) {
+                                    this.walkAnimation.y += this.walkAnimation.vY;
+                                }
+
                                 break;
                         }
 

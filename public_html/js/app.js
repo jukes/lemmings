@@ -29,7 +29,7 @@ requirejs(['my/assetsHolder', 'easeljs', 'my/lemmings', 'ndgmr'],
             var lemming_list = [];
             var levelBitmap;
             var levelObj;
-            var MAX_LEMMINGS = 1;
+            var MAX_LEMMINGS = 5;
 
             canvas = document.getElementById('gameCanvas');
 
@@ -52,7 +52,7 @@ requirejs(['my/assetsHolder', 'easeljs', 'my/lemmings', 'ndgmr'],
                     console.log('json level loaded');
                 }
             };
-            ajaxCall.send();            
+            ajaxCall.send();
 
             //Load the sprites!!!
             assetsHolder.load();
