@@ -5,7 +5,7 @@ requirejs.config({
         easeljs: {
             exports: 'createjs'
         },
-        ndgmr:{
+        ndgmr: {
             exports: 'ndgmr'
         }
     },
@@ -28,6 +28,8 @@ requirejs(['my/assetsHolder', 'easeljs', 'my/lemmings', 'ndgmr'],
             var screen_height;
             var lemming_list = [];
             var levelBitmap;
+            var levelObj;
+            var MAX_LEMMINGS = 1;
 
             canvas = document.getElementById('gameCanvas');
 
@@ -40,6 +42,17 @@ requirejs(['my/assetsHolder', 'easeljs', 'my/lemmings', 'ndgmr'],
             assetsHolder.onImagesError = function(imageObj) {
                 console.log('Error loading [' + imageObj.src + ']');
             };
+            
+            //Load level json obj
+            var ajaxCall = new XMLHttpRequest();
+            ajaxCall.open('GET', 'js/json/alevel.json', false);
+            ajaxCall.onreadystatechange = function() {
+                if (ajaxCall.readyState === 4) {                    
+                    levelObj = JSON.parse(ajaxCall.responseText);
+                    console.log('json level loaded');
+                }
+            };
+            ajaxCall.send();            
 
             //Load the sprites!!!
             assetsHolder.load();
@@ -62,11 +75,11 @@ requirejs(['my/assetsHolder', 'easeljs', 'my/lemmings', 'ndgmr'],
                 //Save canvas dimensions for later calcs
                 screen_width = canvas.width;
                 screen_height = canvas.height;
-                
+
                 //Load level 
                 levelBitmap = new createjs.Bitmap(assetsHolder.sheet('level'));
-                levelBitmap.x=0;
-                levelBitmap.y=190;
+                levelBitmap.x = 0;
+                levelBitmap.y = 190;
                 stage.addChild(levelBitmap);
                 //stage.prototype.level = levelBitmap;
 
@@ -89,7 +102,7 @@ requirejs(['my/assetsHolder', 'easeljs', 'my/lemmings', 'ndgmr'],
              * @returns {Object}
              */
             function createLemming() {
-                var lemming = lemmings.create(stage, levelBitmap, screen_width, screen_height);
+                var lemming = lemmings.create(stage, levelBitmap, levelObj, screen_width, screen_height);
                 lemming_list.push(lemming);
                 return lemming;
             }
@@ -112,13 +125,13 @@ requirejs(['my/assetsHolder', 'easeljs', 'my/lemmings', 'ndgmr'],
                 var ticks = createjs.Ticker.getTicks();
                 if (ticks % 300 === 0) {
 
-                    if (lemming_list.length < 5) {
+                    if (lemming_list.length < MAX_LEMMINGS) {
                         var lemming = createLemming();
 
                         stage.addChild(lemming.fallAnimation);
                     }
                 }
-                
+
                 //Update the stage                
                 stage.update();
             }

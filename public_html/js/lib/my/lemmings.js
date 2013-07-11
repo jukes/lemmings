@@ -19,11 +19,11 @@ define(['my/assetsHolder', 'easeljs', 'ndgmr'],
                     //Width, height and registration point of each sprite
                     frames: {width: 64, height: 64, regX: 32, regY: 32},
                     //frames: {width: 85, height: 83, regX: 32, regY: 32},
-                    
+
                     // To slow down the animation loop of the sprite, we set the frequency to 4 to slow down by a 4x factor
                     animations: {
                         walk: [0, 9, 'walk', 6]
-                        //walk: [0, 4, 'walk', 6]
+                                //walk: [0, 4, 'walk', 6]
                     }
                 });
 
@@ -64,7 +64,7 @@ define(['my/assetsHolder', 'easeljs', 'ndgmr'],
                  * @param {Number} scr_height
                  * @returns {status: Number, screen_width: Number, screen_height: Number, walkAnimation: createjs.BitmapAnimation, fallAnimation: createjs.BitmapAnimation}
                  */
-                create: function(aStage, aLevel, scr_width, scr_height) {
+                create: function(aStage, aLevel, aLevelObj, scr_width, scr_height) {
 
                     var lemming = {
                         SPAWN: this.SPAWN,
@@ -78,7 +78,9 @@ define(['my/assetsHolder', 'easeljs', 'ndgmr'],
                         screen_width: scr_width,
                         screen_height: scr_height,
                         stage: aStage,
-                        level: aLevel
+                        level: aLevel,
+                        levelObj: aLevelObj,
+                        height: 64
                     };
 
                     //Create a BitmapAnimation instance to display and play back the sprite sheet:
@@ -134,18 +136,29 @@ define(['my/assetsHolder', 'easeljs', 'ndgmr'],
 
                         switch (this.status) {
                             case this.SPAWN:
-                                var collision = ndgmr.checkPixelCollision(this.fallAnimation, this.level, 0);
+                                //var collision = ndgmr.checkPixelCollision(this.fallAnimation, this.level, 0);
                                 //var collision = ndgmr.checkRectCollision(this.fallAnimation, this.level);
+
+                                var collision = false;
+                                if (this.fallAnimation.y + this.height-32 >= this.level.y) {
+                                    
+                                    var j = this.fallAnimation.x;
+                                    var i = this.fallAnimation.y + this.height-32-190;
+                                    //alert('ii='+i+', j='+j);
+
+                                    console.log('i=' + i + ', j=' + j + ' Val: ' + this.levelObj[i][j]);
+                                    collision = this.levelObj[i][j] !== 0;
+                                    
+                                }
+                                //var collision = this.fallAnimation.y + this.height >= this.level.y && this.levelObj[this.fallAnimation.x][190+this.fallAnimation.y + this.height] !== 0;
+
                                 if (collision) {
-                                    
                                     //Check for non transparent pixel in level
-                                    
-                                    
                                     this.status = this.WALKING;
                                     this.walkAnimation.direction = 90;
                                     this.walkAnimation.x = this.fallAnimation.x;
                                     this.walkAnimation.y = this.fallAnimation.y;
-                                    this.stage.removeChild(this.fallAnimation);                                    
+                                    this.stage.removeChild(this.fallAnimation);
                                     this.walkAnimation.gotoAndPlay('walk_h');
                                     this.stage.addChild(this.walkAnimation);
                                 }
@@ -157,10 +170,10 @@ define(['my/assetsHolder', 'easeljs', 'ndgmr'],
                                 //console.log('Walking');
                                 this.walkAnimation.x += this.walkAnimation.vX;
                                 //Avoid "Walking in the Air" mode
-                                var collision = ndgmr.checkPixelCollision(this.walkAnimation, this.level, 0);                                
-                                if (!collision) {
-                                    this.walkAnimation.y += this.walkAnimation.vY;
-                                }
+                                //var collision = ndgmr.checkPixelCollision(this.walkAnimation, this.level, 0);                                
+                                //if (!collision) {
+                                //    this.walkAnimation.y += this.walkAnimation.vY;
+                                //}
                                 break;
                         }
 
