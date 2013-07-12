@@ -28,6 +28,7 @@ requirejs(['my/assetsHolder', 'easeljs', 'my/lemmings', 'ndgmr'],
             var screen_height;
             var lemming_list = [];
             var levelBitmap;
+            var levelContainer;
             var levelObj;
             var MAX_LEMMINGS = 1;
 
@@ -80,8 +81,29 @@ requirejs(['my/assetsHolder', 'easeljs', 'my/lemmings', 'ndgmr'],
                 levelBitmap = new createjs.Bitmap(assetsHolder.sheet('level'));
                 levelBitmap.x = 0;
                 levelBitmap.y = 190;
-                stage.addChild(levelBitmap);
+                levelBitmap.name = 'levelBitmap';
+                levelBitmap.visible = true;
+                //stage.addChild(levelBitmap);
+                
+                
+                //levelBitmap.cache(0,0,assetsHolder.sheet('level').width,assetsHolder.sheet('level').height);
                 //stage.prototype.level = levelBitmap;
+                var shovel = new createjs.Shape();
+                shovel.name='shovel';
+                shovel.graphics.ss(10,'round').s('#ff0000');                
+                
+                levelContainer = new createjs.Container();                
+                levelContainer.addChild(shovel);
+                levelContainer.addChild(levelBitmap);
+                //alert('xx');
+                
+                stage.addChild(levelContainer);
+                
+                
+                levelContainer.name = 'levelContainer';
+                levelContainer.cache(0,190,assetsHolder.sheet('level').width,assetsHolder.sheet('level').height);
+                
+                //alert('W:'+assetsHolder.sheet('level').width);
 
                 //Initialize lemming sprites
                 lemmings.init();
@@ -102,7 +124,7 @@ requirejs(['my/assetsHolder', 'easeljs', 'my/lemmings', 'ndgmr'],
              * @returns {Object}
              */
             function createLemming() {
-                var lemming = lemmings.create(stage, levelBitmap, levelObj, screen_width, screen_height);
+                var lemming = lemmings.create(stage, levelBitmap, levelContainer, levelObj, screen_width, screen_height);
                 lemming_list.push(lemming);
                 return lemming;
             }

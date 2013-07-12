@@ -64,7 +64,7 @@ define(['my/assetsHolder', 'easeljs', 'ndgmr'],
                  * @param {Number} scr_height
                  * @returns {status: Number, screen_width: Number, screen_height: Number, walkAnimation: createjs.BitmapAnimation, fallAnimation: createjs.BitmapAnimation}
                  */
-                create: function(aStage, aLevel, aLevelObj, scr_width, scr_height) {
+                create: function(aStage, aLevel, levelContainer, aLevelObj, scr_width, scr_height) {
 
                     var lemming = {
                         SPAWN: this.SPAWN,
@@ -75,11 +75,13 @@ define(['my/assetsHolder', 'easeljs', 'ndgmr'],
                         BUILDING: this.BUILDING,
                         STOPPING: this.STOPPING,
                         status: this.SPAWN,
+                        currentSprite: null,
                         screen_width: scr_width,
                         screen_height: scr_height,
                         stage: aStage,
                         level: aLevel,
                         levelObj: aLevelObj,
+                        levelContainer: levelContainer,
                         width: 64,
                         height: 64
                     };
@@ -119,6 +121,8 @@ define(['my/assetsHolder', 'easeljs', 'ndgmr'],
                     lemming.fallAnimation.regY = lemming.fallAnimation.spriteSheet.frameHeight / 2 | 0;
                     lemming.fallAnimation.gotoAndPlay("fall");
 
+                    lemming.currentSprite = lemming.fallAnimation;
+
 
                     lemming.getStatus = function() {
                         return this.status;
@@ -133,16 +137,16 @@ define(['my/assetsHolder', 'easeljs', 'ndgmr'],
                      * @param {type} currentSprite
                      * @returns {Boolean}
                      */
-                    lemming.collisionY = function(currentSprite) {
+                    lemming.collisionY = function() {
 
                         //console.log(currentSprite);
 
                         var collision = false;
 
-                        if (currentSprite.y + this.height - 32 >= this.level.y) {
+                        if (this.currentSprite.y + this.height - 32 >= this.level.y) {
 
-                            var j = currentSprite.x;
-                            var i = currentSprite.y + this.height - 32 - 190;
+                            var j = this.currentSprite.x;
+                            var i = this.currentSprite.y + this.height - 32 - 190;
                             if (i < this.levelObj.length && j < this.levelObj[0].length) {
                                 //alert('ii='+i+', j='+j);
 
@@ -154,19 +158,19 @@ define(['my/assetsHolder', 'easeljs', 'ndgmr'],
                         return collision;
                     };
 
-                    lemming.collisionX = function(currentSprite, maxHop, directionAngle) {
+                    lemming.collisionX = function(maxHop, directionAngle) {
 
-                        var collision = {collision: false, xOffset:0, yOffset: 0};
+                        var collision = {collision: false, xOffset: 0, yOffset: 0};
 
-                        if (currentSprite.y + this.height - 32 >= this.level.y) {
+                        if (this.currentSprite.y + this.height - 32 >= this.level.y) {
 
-                            var j = directionAngle === 90 ? currentSprite.x + 14  : currentSprite.x-16;
-                            var i = currentSprite.y + this.height - 32 - 190;
+                            var j = directionAngle === 90 ? this.currentSprite.x + 14 : this.currentSprite.x - 16;
+                            var i = this.currentSprite.y + this.height - 32 - 190;
                             if (i < this.levelObj.length && j < this.levelObj[0].length) {
                                 //alert('ii='+i+', j='+j);
 
                                 //console.log('i=' + i + ', j=' + j + ' Val: ' + this.levelObj[i][j]);
-                                var wallAhead = this.levelObj[i-4][j] !== 0;
+                                var wallAhead = this.levelObj[i - 4][j] !== 0;
                                 var climbable = false;
                                 if (wallAhead) {
                                     //alert('wallAhead!: i='+i+', j='+j+' val='+this.levelObj[i][j]);
@@ -174,19 +178,38 @@ define(['my/assetsHolder', 'easeljs', 'ndgmr'],
                                         //console.log(this.levelObj[i - k][j]);
                                         if (this.levelObj[i - k][j] === 0) {
                                             climbable = true;
-                                            collision.yOffset = k-4;
+                                            collision.yOffset = k - 4;
                                             //collision.xOffset = j+2;
                                             break;
                                         }
                                     }
                                     //if(!climbable)
-                                      // alert('Not climbable! yOff: '+collision.yOffset);
+                                    // alert('Not climbable! yOff: '+collision.yOffset);
                                 }
                                 //console.log('Climb it? '+climbable);
                                 collision.collision = wallAhead && !climbable;
                             }
                         }
                         return collision;
+                    };
+
+                    /**
+                     * 
+                     * @param {Bitmap} currentBitmap
+                     * @returns {undefined}
+                     */
+                    lemming.dig = function() {
+                        var levelContainer = this.stage.getChildByName('levelContainer');
+
+                        var shovel = levelContainer.getChildByName('shovel');
+//                        
+//                        alert('fff');
+//                        shovel.graphics.mt(this.currentSprite.x + 10, this.currentSprite.y + this.height + 1);
+//                        shovel.graphics.lt(this.currentSprite.x + 10, this.currentSprite.y + this.height + 11);
+                        shovel.graphics.mt(50, 215 + 1);
+                        shovel.graphics.lt(50, 215 + 11);
+                        levelContainer.updateCache('destination-in');
+                        shovel.graphics.clear(); //<--- Check this!!
                     };
 
                     /**
@@ -209,6 +232,7 @@ define(['my/assetsHolder', 'easeljs', 'ndgmr'],
                                     this.walkAnimation.x = this.fallAnimation.x;
                                     this.walkAnimation.y = this.fallAnimation.y;
                                     this.stage.removeChild(this.fallAnimation);
+                                    this.currentSprite = this.walkAnimation;
                                     this.walkAnimation.gotoAndPlay('walk_h');
                                     this.stage.addChild(this.walkAnimation);
                                 }
@@ -217,35 +241,50 @@ define(['my/assetsHolder', 'easeljs', 'ndgmr'],
                                 }
                                 break;
                             case this.WALKING:
-                                //alert('Walking');
-                                this.walkAnimation.x += this.walkAnimation.vX*(this.walkAnimation.direction/Math.abs(this.walkAnimation.direction));
 
-                                var collidedX = this.collisionX(this.walkAnimation, 20, this.walkAnimation.direction);
-                                if (collidedX.collision) {
-                                    if (this.walkAnimation.direction === 90) {
-                                        this.walkAnimation.direction = -90;
-                                        this.walkAnimation.gotoAndPlay('walk');
-                                        //alert('Gonna walk');
-                                    }
-                                    else {
-                                        this.walkAnimation.direction = 90;
-                                        this.walkAnimation.gotoAndPlay('walk_h');
-                                        //alert('Gonna walk_h');
-                                    }
-                                }                                
-                                else if (collidedX.yOffset>0) {
-                                    alert('Adjusted y from colideX. Offs: '+collidedX.yOffset);
-                                    this.walkAnimation.y -= collidedX.yOffset;
-                                    //this.walkAnimation.x += 2;
-                                }
-                                
-                                //Avoid "Walking in the Air" mode
-                                var collidedY = this.collisionY(this.walkAnimation);
-                                if (!collidedY && collidedX.yOffset===0) {
-                                    //alert('Adjusted y from colideY'+rand);
-                                    this.walkAnimation.y += this.walkAnimation.vY;
-                                }
+                                if (/*this.walkAnimation.x > 150*/false) {
+                                    this.status = this.DIGGING;
+                                    this.fallAnimation.x = this.currentSprite.x;
+                                    this.fallAnimation.y = this.currentSprite.y;
+                                    this.stage.removeChild(this.walkAnimation);
+                                    this.currentSprite = this.fallAnimation;
+                                    this.fallAnimation.gotoAndPlay('fall');
+                                    this.stage.addChild(this.fallAnimation);
+                                } else {
 
+                                    //alert('Walking');
+                                    this.walkAnimation.x += this.walkAnimation.vX * (this.walkAnimation.direction / Math.abs(this.walkAnimation.direction));
+
+                                    var collidedX = this.collisionX(20, this.walkAnimation.direction);
+                                    if (collidedX.collision) {
+                                        if (this.walkAnimation.direction === 90) {
+                                            this.walkAnimation.direction = -90;
+                                            this.walkAnimation.gotoAndPlay('walk');
+                                            //alert('Gonna walk');
+                                        }
+                                        else {
+                                            this.walkAnimation.direction = 90;
+                                            this.walkAnimation.gotoAndPlay('walk_h');
+                                            //alert('Gonna walk_h');
+                                        }
+                                    }
+                                    else if (collidedX.yOffset > 0) {
+                                        //alert('Adjusted y from colideX. Offs: '+collidedX.yOffset);
+                                        this.walkAnimation.y -= collidedX.yOffset;
+                                        //this.walkAnimation.x += 2;
+                                    }
+
+                                    //Avoid "Walking in the Air" mode
+                                    var collidedY = this.collisionY();
+                                    if (!collidedY && collidedX.yOffset === 0) {
+                                        //alert('Adjusted y from colideY'+rand);
+                                        this.walkAnimation.y += this.walkAnimation.vY;
+                                    }
+                                }
+                                break;
+                            case this.DIGGING:
+                                this.dig();
+                                this.fallAnimation.y += this.walkAnimation.vY; //
                                 break;
                         }
 
