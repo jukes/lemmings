@@ -1,0 +1,21 @@
+#!/bin/bash
+
+if [ -z $1 ]
+then
+	echo "Needs input jpeg" 
+	exit 1
+fi
+
+if [ -z $2 ]
+then
+	echo "Needs output json" 
+	exit 1
+fi
+
+
+jp2a $1 --size=700x230 --chars=120>/tmp/jp2a.tmp
+
+cat /tmp/jp2a.tmp|sed 's/\([0-9]\)/\1\,/g'|sed 's/\(^[0-9]\)/\[\1/g'|sed 's/\([0-9]\)\,$/\1\]\,/g' >$2
+
+echo "Done $2. Retouch in txt editor"
+

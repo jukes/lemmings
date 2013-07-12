@@ -156,30 +156,31 @@ define(['my/assetsHolder', 'easeljs', 'ndgmr'],
 
                     lemming.collisionX = function(currentSprite, maxHop, directionAngle) {
 
-                        var collision = {collision: false, yOffset: 0};
+                        var collision = {collision: false, xOffset:0, yOffset: 0};
 
                         if (currentSprite.y + this.height - 32 >= this.level.y) {
 
-                            var j = directionAngle === 90 ? currentSprite.x + 12  : currentSprite.x-16;
+                            var j = directionAngle === 90 ? currentSprite.x + 14  : currentSprite.x-16;
                             var i = currentSprite.y + this.height - 32 - 190;
                             if (i < this.levelObj.length && j < this.levelObj[0].length) {
                                 //alert('ii='+i+', j='+j);
 
                                 //console.log('i=' + i + ', j=' + j + ' Val: ' + this.levelObj[i][j]);
-                                var wallAhead = this.levelObj[i-5][j] !== 0;
+                                var wallAhead = this.levelObj[i-4][j] !== 0;
                                 var climbable = false;
                                 if (wallAhead) {
                                     //alert('wallAhead!: i='+i+', j='+j+' val='+this.levelObj[i][j]);
                                     for (var k = 1; k <= maxHop; k++) {
-                                        console.log(this.levelObj[i - k][j]);
+                                        //console.log(this.levelObj[i - k][j]);
                                         if (this.levelObj[i - k][j] === 0) {
                                             climbable = true;
-                                            collision.yOffset = k+1;
+                                            collision.yOffset = k-4;
+                                            //collision.xOffset = j+2;
                                             break;
                                         }
                                     }
                                     //if(!climbable)
-                                       //alert('Not climbable! yOff: '+collision.yOffset);
+                                      // alert('Not climbable! yOff: '+collision.yOffset);
                                 }
                                 //console.log('Climb it? '+climbable);
                                 collision.collision = wallAhead && !climbable;
@@ -217,26 +218,31 @@ define(['my/assetsHolder', 'easeljs', 'ndgmr'],
                                 break;
                             case this.WALKING:
                                 //alert('Walking');
-                                this.walkAnimation.x += this.walkAnimation.vX;
+                                this.walkAnimation.x += this.walkAnimation.vX*(this.walkAnimation.direction/Math.abs(this.walkAnimation.direction));
 
-                                var collidedX = this.collisionX(this.walkAnimation, 15, this.walkAnimation.direction);
-                                if (collidedX.collition) {
+                                var collidedX = this.collisionX(this.walkAnimation, 20, this.walkAnimation.direction);
+                                if (collidedX.collision) {
                                     if (this.walkAnimation.direction === 90) {
                                         this.walkAnimation.direction = -90;
-                                        this.walkAnimation.gotoAndPlay("walk");
+                                        this.walkAnimation.gotoAndPlay('walk');
+                                        //alert('Gonna walk');
                                     }
                                     else {
                                         this.walkAnimation.direction = 90;
-                                        this.walkAnimation.gotoAndPlay("walk");
+                                        this.walkAnimation.gotoAndPlay('walk_h');
+                                        //alert('Gonna walk_h');
                                     }
-                                }
-                                else /*if (collidedX.yOffset>2)*/ {
+                                }                                
+                                else if (collidedX.yOffset>0) {
+                                    alert('Adjusted y from colideX. Offs: '+collidedX.yOffset);
                                     this.walkAnimation.y -= collidedX.yOffset;
+                                    //this.walkAnimation.x += 2;
                                 }
-
+                                
                                 //Avoid "Walking in the Air" mode
                                 var collidedY = this.collisionY(this.walkAnimation);
-                                if (!collidedY) {
+                                if (!collidedY && collidedX.yOffset===0) {
+                                    //alert('Adjusted y from colideY'+rand);
                                     this.walkAnimation.y += this.walkAnimation.vY;
                                 }
 

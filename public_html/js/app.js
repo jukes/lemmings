@@ -29,7 +29,7 @@ requirejs(['my/assetsHolder', 'easeljs', 'my/lemmings', 'ndgmr'],
             var lemming_list = [];
             var levelBitmap;
             var levelObj;
-            var MAX_LEMMINGS = 5;
+            var MAX_LEMMINGS = 1;
 
             canvas = document.getElementById('gameCanvas');
 
