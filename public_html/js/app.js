@@ -28,7 +28,7 @@ requirejs(['my/assetsHolder', 'easeljs', 'my/lemmings', 'ndgmr'],
             var screen_height;
             var lemming_list = [];
             var levelBitmap;
-            var levelContainer;
+            //var levelContainer;
             var levelObj;
             var MAX_LEMMINGS = 1;
 
@@ -43,12 +43,12 @@ requirejs(['my/assetsHolder', 'easeljs', 'my/lemmings', 'ndgmr'],
             assetsHolder.onImagesError = function(imageObj) {
                 console.log('Error loading [' + imageObj.src + ']');
             };
-            
+
             //Load level json obj
             var ajaxCall = new XMLHttpRequest();
             ajaxCall.open('GET', 'js/json/alevel.json', false);
             ajaxCall.onreadystatechange = function() {
-                if (ajaxCall.readyState === 4) {                    
+                if (ajaxCall.readyState === 4) {
                     levelObj = JSON.parse(ajaxCall.responseText);
                     console.log('json level loaded');
                 }
@@ -82,27 +82,34 @@ requirejs(['my/assetsHolder', 'easeljs', 'my/lemmings', 'ndgmr'],
                 levelBitmap.x = 0;
                 levelBitmap.y = 190;
                 levelBitmap.name = 'levelBitmap';
-                levelBitmap.visible = true;
-                //stage.addChild(levelBitmap);
+                //levelBitmap.visible = true;
                 
                 
-                //levelBitmap.cache(0,0,assetsHolder.sheet('level').width,assetsHolder.sheet('level').height);
-                //stage.prototype.level = levelBitmap;
+//  TRY THIS:::::
+//                var displayObject = new createjs.Bitmap(source);
+//                displayObject.compositeOperation = "source-over";
+
+
+                levelBitmap.cache(0, 0, assetsHolder.sheet('level').width, assetsHolder.sheet('level').height);
+                //levelBitmap.compositeOperation = 'destination-out';
+                stage.addChild(levelBitmap);
+                alert('gg');
+                
                 var shovel = new createjs.Shape();
-                shovel.name='shovel';
-                shovel.graphics.ss(10,'round').s('#ff0000');                
-                
-                levelContainer = new createjs.Container();                
-                levelContainer.addChild(shovel);
-                levelContainer.addChild(levelBitmap);
+                shovel.name = 'shovel';
+                shovel.graphics.ss(10, 'round').s('#ff0000');
+
+//                levelContainer = new createjs.Container();
+//                levelContainer.addChild(shovel);
+//                levelContainer.addChild(levelBitmap);
                 //alert('xx');
-                
-                stage.addChild(levelContainer);
-                
-                
-                levelContainer.name = 'levelContainer';
-                levelContainer.cache(0,190,assetsHolder.sheet('level').width,assetsHolder.sheet('level').height);
-                
+
+//                stage.addChild(levelContainer);
+
+
+//                levelContainer.name = 'levelContainer';
+//                levelContainer.cache(0, 190, assetsHolder.sheet('level').width, assetsHolder.sheet('level').height);
+
                 //alert('W:'+assetsHolder.sheet('level').width);
 
                 //Initialize lemming sprites
@@ -124,7 +131,7 @@ requirejs(['my/assetsHolder', 'easeljs', 'my/lemmings', 'ndgmr'],
              * @returns {Object}
              */
             function createLemming() {
-                var lemming = lemmings.create(stage, levelBitmap, levelContainer, levelObj, screen_width, screen_height);
+                var lemming = lemmings.create(stage, levelBitmap, levelObj, screen_width, screen_height);
                 lemming_list.push(lemming);
                 return lemming;
             }

@@ -64,7 +64,7 @@ define(['my/assetsHolder', 'easeljs', 'ndgmr'],
                  * @param {Number} scr_height
                  * @returns {status: Number, screen_width: Number, screen_height: Number, walkAnimation: createjs.BitmapAnimation, fallAnimation: createjs.BitmapAnimation}
                  */
-                create: function(aStage, aLevel, levelContainer, aLevelObj, scr_width, scr_height) {
+                create: function(aStage, aLevel, aLevelObj, scr_width, scr_height) {
 
                     var lemming = {
                         SPAWN: this.SPAWN,
@@ -81,7 +81,7 @@ define(['my/assetsHolder', 'easeljs', 'ndgmr'],
                         stage: aStage,
                         level: aLevel,
                         levelObj: aLevelObj,
-                        levelContainer: levelContainer,
+                        //levelContainer: levelContainer,
                         width: 64,
                         height: 64
                     };
@@ -199,17 +199,27 @@ define(['my/assetsHolder', 'easeljs', 'ndgmr'],
                      * @returns {undefined}
                      */
                     lemming.dig = function() {
-                        var levelContainer = this.stage.getChildByName('levelContainer');
+                        var levelBitmap = this.stage.getChildByName('levelBitmap');
+                        //levelBitmap.compositeOperation = 'destination-out';
+                        var levelCanvas = levelBitmap.cacheCanvas;
+                        var context = levelCanvas.getContext('2d');
+                        
+                        context.fillStyle = 'yellow';
+                        context.fillRect(this.currentSprite.x + 10, this.currentSprite.y + this.height + 1, 40, 5);
+                        //context.stroke();
+                        levelBitmap.updateCache('destination-out');
+                        alert('Jssa!!');
 
-                        var shovel = levelContainer.getChildByName('shovel');
+//                        var levelContainer = this.stage.getChildByName('levelContainer');
+//                        var shovel = levelContainer.getChildByName('shovel');
 //                        
 //                        alert('fff');
 //                        shovel.graphics.mt(this.currentSprite.x + 10, this.currentSprite.y + this.height + 1);
 //                        shovel.graphics.lt(this.currentSprite.x + 10, this.currentSprite.y + this.height + 11);
-                        shovel.graphics.mt(50, 215 + 1);
-                        shovel.graphics.lt(50, 215 + 11);
-                        levelContainer.updateCache('destination-in');
-                        shovel.graphics.clear(); //<--- Check this!!
+//                        shovel.graphics.mt(50, 215 + 1);
+//                        shovel.graphics.lt(50, 215 + 11);
+//                        levelContainer.updateCache('destination-in');
+//                        shovel.graphics.clear(); //<--- Check this!!
                     };
 
                     /**
@@ -242,7 +252,7 @@ define(['my/assetsHolder', 'easeljs', 'ndgmr'],
                                 break;
                             case this.WALKING:
 
-                                if (/*this.walkAnimation.x > 150*/false) {
+                                if (this.walkAnimation.x > 150) {
                                     this.status = this.DIGGING;
                                     this.fallAnimation.x = this.currentSprite.x;
                                     this.fallAnimation.y = this.currentSprite.y;
