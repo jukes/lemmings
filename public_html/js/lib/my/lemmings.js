@@ -195,31 +195,40 @@ define(['my/assetsHolder', 'easeljs', 'ndgmr'],
 
                     /**
                      * 
-                     * @param {Bitmap} currentBitmap
                      * @returns {undefined}
                      */
                     lemming.dig = function() {
-                        var levelBitmap = this.stage.getChildByName('levelBitmap');
-                        //levelBitmap.compositeOperation = 'destination-out';
-                        var levelCanvas = levelBitmap.cacheCanvas;
-                        var context = levelCanvas.getContext('2d');
-                        
-                        context.fillStyle = 'yellow';
-                        context.fillRect(this.currentSprite.x + 10, this.currentSprite.y + this.height + 1, 40, 5);
-                        //context.stroke();
-                        levelBitmap.updateCache('destination-out');
-                        alert('Jssa!!');
 
-//                        var levelContainer = this.stage.getChildByName('levelContainer');
-//                        var shovel = levelContainer.getChildByName('shovel');
-//                        
-//                        alert('fff');
-//                        shovel.graphics.mt(this.currentSprite.x + 10, this.currentSprite.y + this.height + 1);
-//                        shovel.graphics.lt(this.currentSprite.x + 10, this.currentSprite.y + this.height + 11);
-//                        shovel.graphics.mt(50, 215 + 1);
-//                        shovel.graphics.lt(50, 215 + 11);
-//                        levelContainer.updateCache('destination-in');
-//                        shovel.graphics.clear(); //<--- Check this!!
+//                        var levelBitmap = this.stage.getChildByName('levelBitmap');
+
+                        //levelBitmap.cache(0, 0, assetsHolder.sheet('level').width, assetsHolder.sheet('level').height);                        
+
+//                        var levelCanvas = levelBitmap.cacheCanvas;
+
+//                        var context = levelCanvas.getContext('2d');
+
+//                        context.fillStyle = 'yellow';
+                        //alert( 'x:'+(this.currentSprite.x + 10)+' y:'+(this.currentSprite.y-64 + this.height + 1) );
+//                        context.fillRect(this.currentSprite.x-16, this.currentSprite.y+25-190, 40, 5);
+                        //context.fillRect(35, 130, 40, 5);
+                        //context.stroke();
+//                        levelBitmap.updateCache('destination-out');
+                        //alert('sJss!!');
+
+
+                        alert('ppp');
+                        var levelContainer = this.stage.getChildByName('levelContainer');
+                        var levelShape = levelContainer.getChildByName('levelShape');
+                        
+//                        levelShape.graphics.beginBitmapFill(assetsHolder.sheet('level')).drawRect(0,0,assetsHolder.sheet('level').width, assetsHolder.sheet('level').height);
+                        
+//                        var shovel = new createjs.Shape();
+//                        //shovel.name = 'shovel';
+                        levelShape.graphics.ss(10, 'round').s('#ff0000');
+                        levelShape.graphics.mt(this.currentSprite.x - 16, this.currentSprite.y + 25-190 + 1);
+                        levelShape.graphics.lt(this.currentSprite.x - 16, this.currentSprite.y + 25-190 + 5);
+                        levelContainer.updateCache('destination-out');
+                        levelShape.graphics.clear(); //<--- Check this!!
                     };
 
                     /**
