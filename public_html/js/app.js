@@ -78,37 +78,12 @@ requirejs(['my/assetsHolder', 'easeljs', 'my/lemmings', 'ndgmr'],
                 screen_height = canvas.height;
 
                 //Load level 
-//                levelBitmap = new createjs.Bitmap(assetsHolder.sheet('level'));
-//                levelBitmap.x = 0;
-//                levelBitmap.y = 190;
-//                levelBitmap.name = 'levelBitmap';
-                //levelBitmap.visible = true;
-                
-                
-//  TRY THIS:::::
-//                var displayObject = new createjs.Bitmap(source);
-//                displayObject.compositeOperation = "source-over";
-
-
-//                levelBitmap.cache(0, 0, assetsHolder.sheet('level').width, assetsHolder.sheet('level').height);
-                //levelBitmap.compositeOperation = 'destination-out';
-//                stage.addChild(levelBitmap);
-                
-                
-//                var shovel = new createjs.Shape();
-//                shovel.name = 'shovel';
-//                shovel.graphics.ss(10, 'round').s('#ff0000');
-
                 levelContainer = new createjs.Container();
                 levelContainer.cache(0, 0, assetsHolder.sheet('level').width, assetsHolder.sheet('level').height);
                 levelContainer.x = 0;
                 levelContainer.y = 190;
                 
-//                levelContainer.addChild(shovel);
-//                levelContainer.addChild(levelBitmap);
-                //alert('xx');
-                
-                var bg = new createjs.Shape();                
+                var bg = new createjs.Shape();
                 bg.name = 'levelShape';
                 bg.graphics.beginBitmapFill(assetsHolder.sheet('level')).drawRect(0,0,assetsHolder.sheet('level').width, assetsHolder.sheet('level').height);
                 
@@ -120,13 +95,8 @@ requirejs(['my/assetsHolder', 'easeljs', 'my/lemmings', 'ndgmr'],
                 levelContainer.name = 'levelContainer';
                 
                 levelContainer.updateCache('source-over');
-                bg.graphics.clear(); //<--- Check this!!
+                bg.graphics.clear();
                 
-                alert('vvv');
-                
-
-                //alert('W:'+assetsHolder.sheet('level').width);
-
                 //Initialize lemming sprites
                 lemmings.init();
 

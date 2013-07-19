@@ -11,11 +11,11 @@ then
 	echo "Needs output json" 
 	exit 1
 fi
+bname=`basename $1 .jpg`
 
+jp2a $1 --size=700x230 --chars=120 > $bname.txt
 
-jp2a $1 --size=700x230 --chars=120>/tmp/jp2a.tmp
-
-cat /tmp/jp2a.tmp|sed 's/\([0-9]\)/\1\,/g'|sed 's/\(^[0-9]\)/\[\1/g'|sed 's/\([0-9]\)\,$/\1\]\,/g' >$2
+cat $bname.txt |sed 's/\([0-9]\)/\1\,/g'|sed 's/\(^[0-9]\)/\[\1/g'|sed 's/\([0-9]\)\,$/\1\]\,/g' >$2
 
 echo "Done $2. Retouch in txt editor"
 

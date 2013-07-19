@@ -1,5 +1,5 @@
-define(['my/assetsHolder', 'easeljs', 'ndgmr'],
-        function(assetsHolder, createjs, ndgmr) {
+define(['my/assetsHolder', 'easeljs'],
+        function(assetsHolder, createjs) {
 
             //var sprites = {};    
             //var lemming = {};
@@ -154,7 +154,6 @@ define(['my/assetsHolder', 'easeljs', 'ndgmr'],
                                 collision = this.levelObj[i][j] !== 0;
                             }
                         }
-
                         return collision;
                     };
 
@@ -193,42 +192,42 @@ define(['my/assetsHolder', 'easeljs', 'ndgmr'],
                         return collision;
                     };
 
+                    lemming.cliffAhead = function(maxDepth, maxLen, directionAngle) {
+                        
+                        var j = directionAngle === 90 ? this.currentSprite.x : this.currentSprite.x;
+                        var i = this.currentSprite.y+32 - 190;
+
+                        var k = 0;
+                        for (k = 0; k < maxLen; k++) {
+                            if (this.levelObj[i][j+k] !== 0) {
+                                return false;
+                            }
+                        }
+                        //alert('Cliff in X! [i='+i+', k='+k+', j+k='+(j+k)+', j='+j+']');
+                        var offset = Math.floor( maxLen/2 );
+                        for (k = 0; k < maxDepth; k++) {
+                            if (this.levelObj[i+k][j+offset] !== 0) {                                
+                                return false;
+                            }
+                        }
+                        //alert('Cliff in Y! [i='+i+', offs='+offset+' j='+j+', k='+k+', i+k='+(i+k)+']');
+                        return true;
+                    };
+
                     /**
                      * 
                      * @returns {undefined}
                      */
                     lemming.dig = function() {
-
-//                        var levelBitmap = this.stage.getChildByName('levelBitmap');
-
-                        //levelBitmap.cache(0, 0, assetsHolder.sheet('level').width, assetsHolder.sheet('level').height);                        
-
-//                        var levelCanvas = levelBitmap.cacheCanvas;
-
-//                        var context = levelCanvas.getContext('2d');
-
-//                        context.fillStyle = 'yellow';
-                        //alert( 'x:'+(this.currentSprite.x + 10)+' y:'+(this.currentSprite.y-64 + this.height + 1) );
-//                        context.fillRect(this.currentSprite.x-16, this.currentSprite.y+25-190, 40, 5);
-                        //context.fillRect(35, 130, 40, 5);
-                        //context.stroke();
-//                        levelBitmap.updateCache('destination-out');
-                        //alert('sJss!!');
-
-
-                        alert('ppp');
                         var levelContainer = this.stage.getChildByName('levelContainer');
                         var levelShape = levelContainer.getChildByName('levelShape');
-                        
-//                        levelShape.graphics.beginBitmapFill(assetsHolder.sheet('level')).drawRect(0,0,assetsHolder.sheet('level').width, assetsHolder.sheet('level').height);
-                        
-//                        var shovel = new createjs.Shape();
-//                        //shovel.name = 'shovel';
-                        levelShape.graphics.ss(10, 'round').s('#ff0000');
-                        levelShape.graphics.mt(this.currentSprite.x - 16, this.currentSprite.y + 25-190 + 1);
-                        levelShape.graphics.lt(this.currentSprite.x - 16, this.currentSprite.y + 25-190 + 5);
+                        levelShape.graphics.ss(25, 'square').s('#ff0000');
+                        levelShape.graphics.mt(this.currentSprite.x - 2, this.currentSprite.y + 25 - 190);
+                        levelShape.graphics.lt(this.currentSprite.x - 2, this.currentSprite.y + 25 - 190 + 2);
                         levelContainer.updateCache('destination-out');
-                        levelShape.graphics.clear(); //<--- Check this!!
+                        //levelContainer.updateCache('source-over');
+                        levelShape.graphics.clear();
+                        //alert('alert!!');
                     };
 
                     /**
@@ -239,6 +238,9 @@ define(['my/assetsHolder', 'easeljs', 'ndgmr'],
                         //console.log('Calling tick from deep inside object');
 
                         switch (this.status) {
+                            
+                            case this.FALLING:
+                            
                             case this.SPAWN:
                                 //var collision = ndgmr.checkPixelCollision(this.fallAnimation, this.level, 0);
                                 //var collision = ndgmr.checkRectCollision(this.fallAnimation, this.level);
@@ -260,8 +262,18 @@ define(['my/assetsHolder', 'easeljs', 'ndgmr'],
                                 }
                                 break;
                             case this.WALKING:
-
-                                if (this.walkAnimation.x > 150) {
+                                
+                                if(this.cliffAhead(60,3,this.walkAnimation.direction)){                                    
+                                    //alert('Cliff!');
+                                    this.status = this.FALLING;
+                                    this.fallAnimation.x = this.currentSprite.x+10;
+                                    this.fallAnimation.y = this.currentSprite.y;
+                                    this.stage.removeChild(this.walkAnimation);
+                                    this.currentSprite = this.fallAnimation;
+                                    this.fallAnimation.gotoAndPlay('fall');
+                                    this.stage.addChild(this.fallAnimation);                                    
+                                }
+                                else if (this.walkAnimation.x > 1500) {
                                     this.status = this.DIGGING;
                                     this.fallAnimation.x = this.currentSprite.x;
                                     this.fallAnimation.y = this.currentSprite.y;
