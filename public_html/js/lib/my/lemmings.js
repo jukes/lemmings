@@ -221,11 +221,15 @@ define(['my/assetsHolder', 'easeljs'],
                     lemming.dig = function() {
                         var levelContainer = this.stage.getChildByName('levelContainer');
                         var levelShape = levelContainer.getChildByName('levelShape');
-                        levelShape.graphics.ss(25, 'square').s('#ff0000');
-                        levelShape.graphics.mt(this.currentSprite.x - 2, this.currentSprite.y + 25 - 190);
-                        levelShape.graphics.lt(this.currentSprite.x - 2, this.currentSprite.y + 25 - 190 + 2);
+//                        levelShape.graphics.ss(25, 'square').s('#ff0000');
+//                        levelShape.graphics.mt(this.currentSprite.x - 2, this.currentSprite.y + 25 - 190);
+//                        levelShape.graphics.lt(this.currentSprite.x - 2, this.currentSprite.y + 25 - 190 + 2);      
+//                        var theShovel = assetsHolder.sheet('shovel');
+//                        levelShape.graphics.beginFill('#ff0000').drawRect(this.currentSprite.x - 16, this.currentSprite.y + 32 - 190,32,5);
+//                        levelShape.graphics.beginBitmapFill(theShovel).drawRect(this.currentSprite.x - 16, this.currentSprite.y + 32 - 190, theShovel.width, theShovel.height);
+                        levelShape.graphics.beginFill("rgba(255,255,255,1)").drawPolyStar(this.currentSprite.x, this.currentSprite.y + 32 - 190, 4+Math.floor(Math.random()*16), 13, Math.round(Math.random()*100)/100, Math.floor(Math.random()*91));
                         levelContainer.updateCache('destination-out');
-                        //levelContainer.updateCache('source-over');
+//                        levelContainer.updateCache('source-over');
                         levelShape.graphics.clear();
                         //alert('alert!!');
                     };
@@ -273,7 +277,7 @@ define(['my/assetsHolder', 'easeljs'],
                                     this.fallAnimation.gotoAndPlay('fall');
                                     this.stage.addChild(this.fallAnimation);                                    
                                 }
-                                else if (this.walkAnimation.x > 1500) {
+                                else if (this.walkAnimation.x > 150) {
                                     this.status = this.DIGGING;
                                     this.fallAnimation.x = this.currentSprite.x;
                                     this.fallAnimation.y = this.currentSprite.y;

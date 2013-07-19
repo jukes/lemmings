@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="744.09448819"
+   height="1052.3622047"
+   id="svg2"
+   version="1.1"
+   inkscape:version="0.48.4 r9939"
+   sodipodi:docname="shovel.svg">
+  <defs
+     id="defs4" />
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="16"
+     inkscape:cx="125.98437"
+     inkscape:cy="533.35835"
+     inkscape:document-units="px"
+     inkscape:current-layer="layer2"
+     showgrid="false"
+     inkscape:window-width="1029"
+     inkscape:window-height="752"
+     inkscape:window-x="1280"
+     inkscape:window-y="48"
+     inkscape:window-maximized="0" />
+  <metadata
+     id="metadata7">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:groupmode="layer"
+     id="layer2"
+     inkscape:label="Layer"
+     style="display:inline">
+    <path
+       style="fill:#000000;fill-opacity:1;stroke:none"
+       d="m 111.94879,513.5417 c 2.74784,0.90729 8.08911,-0.58438 6.23672,2.25995 -1.21122,1.85984 2.50932,2.28969 7.43219,0.54161 1.94932,-0.69219 5.18242,-3.03191 7.51925,-1.45568 2.38749,1.6104 2.62693,-1.0797 9.36588,-1.46331 -0.36587,2.83908 -4.28071,2.53887 -2.53586,3.42792 3.17058,1.64019 2.53619,2.29585 1.97921,5.90784 -2.483,3.32977 -4.02112,2.32412 -5.536,1.21182 -2.09173,-1.2861 -3.5855,0.26606 -5.21032,1.19614 -1.82064,-0.87775 -3.82909,-0.86407 -5.97946,-0.17677 -1.63761,1.91812 -6.11094,-3.2568 -7.67341,-1.58723 -1.50407,1.60717 -3.00859,-1.90876 -6.1655,-0.58524 -1.37697,0.6536 -1.1475,-3.33316 0.77293,-5.16058 1.8648,-1.7745 -0.44161,-2.13584 -0.20563,-4.11647 z"
+       id="rect5257"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="csssccccccscsc"
+       inkscape:export-filename="/home/hevega/NetBeansProjects/HTML5App/utils/shovel.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+  </g>
+</svg>
