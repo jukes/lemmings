@@ -30,7 +30,7 @@ requirejs(['my/assetsHolder', 'easeljs', 'my/lemmings', 'ndgmr'],
             var levelBitmap;
             var levelContainer;
             var levelObj;
-            var MAX_LEMMINGS = 2;
+            var MAX_LEMMINGS = 3;
 
             canvas = document.getElementById('gameCanvas');
 

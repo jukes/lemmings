@@ -323,7 +323,7 @@ define(['my/assetsHolder', 'easeljs'],
                             case this.WALKING:
 
                                 if (this.cliffAhead(60, 3, this.walkAnimation.direction)) {
-                                    alert('Cliff!');
+                                    //alert('Cliff!');
                                     if (this.canBuild) {
                                         this.status = this.BUILDING;
                                         this.build(this.walkAnimation.direction);
