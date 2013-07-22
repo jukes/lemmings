@@ -30,7 +30,7 @@ requirejs(['my/assetsHolder', 'easeljs', 'my/lemmings', 'ndgmr'],
             var levelBitmap;
             var levelContainer;
             var levelObj;
-            var MAX_LEMMINGS = 1;
+            var MAX_LEMMINGS = 2;
 
             canvas = document.getElementById('gameCanvas');
 
@@ -101,6 +101,8 @@ requirejs(['my/assetsHolder', 'easeljs', 'my/lemmings', 'ndgmr'],
                 lemmings.init();
 
                 var lemming = createLemming();
+                lemming.canDig = true;
+                
                 stage.addChild(lemming.fallAnimation);
 
                 createjs.Ticker.addListener(window);
@@ -118,6 +120,7 @@ requirejs(['my/assetsHolder', 'easeljs', 'my/lemmings', 'ndgmr'],
             function createLemming() {
                 //var lemming = lemmings.create(stage, levelBitmap, levelObj, screen_width, screen_height);
                 var lemming = lemmings.create(stage, levelContainer, levelObj, screen_width, screen_height);
+                lemming.canBuild = true;
                 lemming_list.push(lemming);
                 return lemming;
             }

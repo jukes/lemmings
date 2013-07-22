@@ -34,7 +34,8 @@ define(['my/assetsHolder', 'easeljs'],
                     images: [assetsHolder.sheet('lemmingFall')],
                     frames: {width: 64, height: 64, regX: 32, regY: 32},
                     animations: {
-                        fall: [0, 10, "fall", 4]
+                        fall: [0, 10, "fall", 4],
+                        dig: [0, 10, "dig", 25]
                     }
                 });
 
@@ -66,6 +67,9 @@ define(['my/assetsHolder', 'easeljs'],
                  */
                 create: function(aStage, aLevel, aLevelObj, scr_width, scr_height) {
 
+                    //var shovelPath = [25.727381,0, 24.98167,1.7752109, 23.551717,2.1983119, 22.809504,3.0775299, 20.814382,3.5021739, 21.127611,4.3798489, 19.513802,5.2306449, 19.316337,6.6212439, 17.593587,6.8753919, 17.014799,7.9818789, 16.000212,8.5485969, 15.584843,9.3141269, 14.461305,9.7814049, 12.684088,9.9077249, 9.7385789,9.3836389, 8.0459829,8.7459369, 6.6218659,7.5841489, 6.6685369,6.8200909, 5.4934379,6.2534079, 5.1354699,5.5162649, 3.9876119,5.0063899, 4.3981049,4.1272079, 2.7230288,3.5620329, 2.1705068,2.5991269, 0.26001734,1.5920459];
+                    var shovelPath = [26, 0, 25, 2, 24, 2, 23, 3, 21, 4, 21, 4, 20, 5, 19, 7, 18, 7, 17, 8, 16, 9, 16, 9, 14, 10, 13, 10, 10, 9, 8, 9, 7, 8, 7, 7, 5, 6, 5, 6, 4, 5, 4, 4, 3, 4, 2, 3, 0, 2]
+
                     var lemming = {
                         SPAWN: this.SPAWN,
                         WALKING: this.WALKING,
@@ -83,7 +87,9 @@ define(['my/assetsHolder', 'easeljs'],
                         levelObj: aLevelObj,
                         //levelContainer: levelContainer,
                         width: 64,
-                        height: 64
+                        height: 64,
+                        canDig: false,
+                        canBuild: false
                     };
 
                     //Create a BitmapAnimation instance to display and play back the sprite sheet:
@@ -193,20 +199,20 @@ define(['my/assetsHolder', 'easeljs'],
                     };
 
                     lemming.cliffAhead = function(maxDepth, maxLen, directionAngle) {
-                        
+
                         var j = directionAngle === 90 ? this.currentSprite.x : this.currentSprite.x;
-                        var i = this.currentSprite.y+32 - 190;
+                        var i = this.currentSprite.y + 32 - 190;
 
                         var k = 0;
                         for (k = 0; k < maxLen; k++) {
-                            if (this.levelObj[i][j+k] !== 0) {
+                            if (this.levelObj[i][j + k] !== 0) {
                                 return false;
                             }
                         }
                         //alert('Cliff in X! [i='+i+', k='+k+', j+k='+(j+k)+', j='+j+']');
-                        var offset = Math.floor( maxLen/2 );
+                        var offset = Math.floor(maxLen / 2);
                         for (k = 0; k < maxDepth; k++) {
-                            if (this.levelObj[i+k][j+offset] !== 0) {                                
+                            if (this.levelObj[i + k][j + offset] !== 0) {
                                 return false;
                             }
                         }
@@ -227,11 +233,60 @@ define(['my/assetsHolder', 'easeljs'],
 //                        var theShovel = assetsHolder.sheet('shovel');
 //                        levelShape.graphics.beginFill('#ff0000').drawRect(this.currentSprite.x - 16, this.currentSprite.y + 32 - 190,32,5);
 //                        levelShape.graphics.beginBitmapFill(theShovel).drawRect(this.currentSprite.x - 16, this.currentSprite.y + 32 - 190, theShovel.width, theShovel.height);
-                        levelShape.graphics.beginFill("rgba(255,255,255,1)").drawPolyStar(this.currentSprite.x, this.currentSprite.y + 32 - 190, 4+Math.floor(Math.random()*16), 13, Math.round(Math.random()*100)/100, Math.floor(Math.random()*91));
+//                        levelShape.graphics.beginFill("rgba(255,255,255,1)").drawPolyStar(this.currentSprite.x, this.currentSprite.y + 32 - 190, 4+Math.floor(Math.random()*16), 13, Math.round(Math.random()*100)/100, Math.floor(Math.random()*91));
+
+                        var xPos = this.currentSprite.x - 13;
+                        var yPos = this.currentSprite.y + 28 - 190;
+                        var enclosingSquareW = 26;
+                        var enclosingSquareH = 10;
+                        levelShape.graphics.beginFill('#000000');
+                        levelShape.graphics.mt(xPos, yPos);
+                        for (var i = 0; i < shovelPath.length; i += 2) {
+                            levelShape.graphics.lt(xPos + shovelPath[i], yPos + shovelPath[i + 1]);
+                        }
+                        levelShape.graphics.closePath();
+
+                        for (var i = 0; i <= enclosingSquareH; i++) {
+                            if (this.levelObj[yPos + i]) { //Temp patch
+                                for (var j = 0; j <= enclosingSquareW; j++) {
+                                    //console.log('yPos+i=' + (yPos + i) + ' xPos+j=' + (xPos + j) + ' val=' + this.levelObj[yPos + i][xPos + j]);
+                                    this.levelObj[yPos + i][xPos + j] = 0;
+                                }
+                            }
+                        }
+
                         levelContainer.updateCache('destination-out');
 //                        levelContainer.updateCache('source-over');
                         levelShape.graphics.clear();
-                        //alert('alert!!');
+//                        alert('alerta!!');
+                    };
+
+                    /**
+                     * 
+                     * @param {number} direction
+                     * @returns {undefined}
+                     */
+                    lemming.build = function(direction) {
+                        var levelContainer = this.stage.getChildByName('levelContainer');
+                        var levelShape = levelContainer.getChildByName('levelShape');
+                        if (direction === 90) {
+                            var xPos = this.currentSprite.x - 5;
+                            var yPos = this.currentSprite.y + 32 - 190;
+                            var brickW = 32;
+                            var brickH = 10;
+                            levelShape.graphics.beginStroke('#ff5000').beginFill('#ff0000').rect(xPos, yPos, brickW, brickH);
+                            levelContainer.updateCache('source-over');
+                            levelShape.graphics.clear();
+                            for (var i = 0; i <= brickH; i++) {
+                                if (this.levelObj[yPos + i]) { //Temp patch
+                                    for (var j = 0; j <= brickW; j++) {
+                                        //console.log('yPos+i=' + (yPos + i) + ' xPos+j=' + (xPos + j) + ' val=' + this.levelObj[yPos + i][xPos + j]);
+                                        this.levelObj[yPos + i][xPos + j] = 2;
+                                    }
+                                }
+                            }
+
+                        }
                     };
 
                     /**
@@ -242,9 +297,9 @@ define(['my/assetsHolder', 'easeljs'],
                         //console.log('Calling tick from deep inside object');
 
                         switch (this.status) {
-                            
+
                             case this.FALLING:
-                            
+
                             case this.SPAWN:
                                 //var collision = ndgmr.checkPixelCollision(this.fallAnimation, this.level, 0);
                                 //var collision = ndgmr.checkRectCollision(this.fallAnimation, this.level);
@@ -266,24 +321,29 @@ define(['my/assetsHolder', 'easeljs'],
                                 }
                                 break;
                             case this.WALKING:
-                                
-                                if(this.cliffAhead(60,3,this.walkAnimation.direction)){                                    
-                                    //alert('Cliff!');
-                                    this.status = this.FALLING;
-                                    this.fallAnimation.x = this.currentSprite.x+10;
-                                    this.fallAnimation.y = this.currentSprite.y;
-                                    this.stage.removeChild(this.walkAnimation);
-                                    this.currentSprite = this.fallAnimation;
-                                    this.fallAnimation.gotoAndPlay('fall');
-                                    this.stage.addChild(this.fallAnimation);                                    
+
+                                if (this.cliffAhead(60, 3, this.walkAnimation.direction)) {
+                                    alert('Cliff!');
+                                    if (this.canBuild) {
+                                        this.status = this.BUILDING;
+                                        this.build(this.walkAnimation.direction);
+                                    } else {
+                                        this.status = this.FALLING;
+                                        this.fallAnimation.x = this.currentSprite.x + 10;
+                                        this.fallAnimation.y = this.currentSprite.y;
+                                        this.stage.removeChild(this.walkAnimation);
+                                        this.currentSprite = this.fallAnimation;
+                                        this.fallAnimation.gotoAndPlay('fall');
+                                        this.stage.addChild(this.fallAnimation);
+                                    }
                                 }
-                                else if (this.walkAnimation.x > 150) {
+                                else if (this.canDig && this.walkAnimation.x > 150) {
                                     this.status = this.DIGGING;
                                     this.fallAnimation.x = this.currentSprite.x;
                                     this.fallAnimation.y = this.currentSprite.y;
                                     this.stage.removeChild(this.walkAnimation);
                                     this.currentSprite = this.fallAnimation;
-                                    this.fallAnimation.gotoAndPlay('fall');
+                                    this.fallAnimation.gotoAndPlay('dig');
                                     this.stage.addChild(this.fallAnimation);
                                 } else {
 
@@ -318,8 +378,43 @@ define(['my/assetsHolder', 'easeljs'],
                                 }
                                 break;
                             case this.DIGGING:
+                                var shovelHeigth = 6;
                                 this.dig();
-                                this.fallAnimation.y += this.walkAnimation.vY; //
+                                this.fallAnimation.y += shovelHeigth; //this.walkAnimation.vY; //
+                                break;
+                            case this.BUILDING:
+                                this.build(this.walkAnimation.direction);
+
+                                //COPY/PASTE from walking logic.. FIX THIS!!                                    
+                                this.walkAnimation.x += this.walkAnimation.vX * (this.walkAnimation.direction / Math.abs(this.walkAnimation.direction));
+
+                                var collidedX = this.collisionX(20, this.walkAnimation.direction);
+                                if (collidedX.collision) {
+                                    if (this.walkAnimation.direction === 90) {
+                                        this.walkAnimation.direction = -90;
+                                        this.walkAnimation.gotoAndPlay('walk');
+                                        //alert('Gonna walk');
+                                    }
+                                    else {
+                                        this.walkAnimation.direction = 90;
+                                        this.walkAnimation.gotoAndPlay('walk_h');
+                                        //alert('Gonna walk_h');
+                                    }
+                                }
+                                else if (collidedX.yOffset > 0) {
+                                    //alert('Adjusted y from colideX. Offs: '+collidedX.yOffset);
+                                    this.walkAnimation.y -= collidedX.yOffset;
+                                    //this.walkAnimation.x += 2;
+                                }
+
+                                //Avoid "Walking in the Air" mode
+                                var collidedY = this.collisionY();
+                                if (!collidedY && collidedX.yOffset === 0) {
+                                    //alert('Adjusted y from colideY'+rand);
+                                    this.walkAnimation.y += this.walkAnimation.vY;
+                                }
+                                //////////////////////////////////////
+
                                 break;
                         }
 
