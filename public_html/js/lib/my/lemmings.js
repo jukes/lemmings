@@ -151,7 +151,7 @@ define(['my/assetsHolder', 'easeljs'],
 
                         if (this.currentSprite.y + this.height - 32 >= this.level.y) {
 
-                            var j = this.currentSprite.x;
+                            var j = this.currentSprite.x+16;
                             var i = this.currentSprite.y + this.height - 32 - 190;
                             if (i < this.levelObj.length && j < this.levelObj[0].length) {
                                 //alert('ii='+i+', j='+j);
@@ -200,7 +200,7 @@ define(['my/assetsHolder', 'easeljs'],
 
                     lemming.cliffAhead = function(maxDepth, maxLen, directionAngle) {
 
-                        var j = directionAngle === 90 ? this.currentSprite.x : this.currentSprite.x;
+                        var j = directionAngle === 90 ? this.currentSprite.x+16 : this.currentSprite.x+16;
                         var i = this.currentSprite.y + 32 - 190;
 
                         var k = 0;
@@ -270,11 +270,11 @@ define(['my/assetsHolder', 'easeljs'],
                         var levelContainer = this.stage.getChildByName('levelContainer');
                         var levelShape = levelContainer.getChildByName('levelShape');
                         if (direction === 90) {
-                            var xPos = this.currentSprite.x - 5;
-                            var yPos = this.currentSprite.y + 32 - 190;
+                            var xPos = this.currentSprite.x + 16;
+                            var yPos = this.currentSprite.y + 26 - 190;
                             var brickW = 32;
                             var brickH = 10;
-                            levelShape.graphics.beginStroke('#ff5000').beginFill('#ff0000').rect(xPos, yPos, brickW, brickH);
+                            levelShape.graphics.beginStroke('#472400').beginFill('#E68A00').rect(xPos, yPos, brickW, brickH);
                             levelContainer.updateCache('source-over');
                             levelShape.graphics.clear();
                             for (var i = 0; i <= brickH; i++) {
@@ -285,7 +285,6 @@ define(['my/assetsHolder', 'easeljs'],
                                     }
                                 }
                             }
-
                         }
                     };
 
@@ -322,7 +321,7 @@ define(['my/assetsHolder', 'easeljs'],
                                 break;
                             case this.WALKING:
 
-                                if (this.cliffAhead(60, 3, this.walkAnimation.direction)) {
+                                if (this.cliffAhead(30, 3, this.walkAnimation.direction)) {
                                     //alert('Cliff!');
                                     if (this.canBuild) {
                                         this.status = this.BUILDING;
@@ -384,37 +383,7 @@ define(['my/assetsHolder', 'easeljs'],
                                 break;
                             case this.BUILDING:
                                 this.build(this.walkAnimation.direction);
-
-                                //COPY/PASTE from walking logic.. FIX THIS!!                                    
-                                this.walkAnimation.x += this.walkAnimation.vX * (this.walkAnimation.direction / Math.abs(this.walkAnimation.direction));
-
-                                var collidedX = this.collisionX(20, this.walkAnimation.direction);
-                                if (collidedX.collision) {
-                                    if (this.walkAnimation.direction === 90) {
-                                        this.walkAnimation.direction = -90;
-                                        this.walkAnimation.gotoAndPlay('walk');
-                                        //alert('Gonna walk');
-                                    }
-                                    else {
-                                        this.walkAnimation.direction = 90;
-                                        this.walkAnimation.gotoAndPlay('walk_h');
-                                        //alert('Gonna walk_h');
-                                    }
-                                }
-                                else if (collidedX.yOffset > 0) {
-                                    //alert('Adjusted y from colideX. Offs: '+collidedX.yOffset);
-                                    this.walkAnimation.y -= collidedX.yOffset;
-                                    //this.walkAnimation.x += 2;
-                                }
-
-                                //Avoid "Walking in the Air" mode
-                                var collidedY = this.collisionY();
-                                if (!collidedY && collidedX.yOffset === 0) {
-                                    //alert('Adjusted y from colideY'+rand);
-                                    this.walkAnimation.y += this.walkAnimation.vY;
-                                }
-                                //////////////////////////////////////
-
+                                this.status = this.WALKING;
                                 break;
                         }
 
